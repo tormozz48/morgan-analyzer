@@ -2,6 +2,7 @@ const _ = require('lodash');
 const hl = require('highland');
 
 const HTTP_METHODS = ['GET', 'POST', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'];
+const PERCENTILES = [0.35, 0.50, 0.80, 0.95, 0.99];
 
 const isMorganRequestRecord = (row) => HTTP_METHODS.some((method) => row.indexOf(method) > -1);
 
@@ -22,7 +23,7 @@ const toRequestRecord = (rowChunks) => {
 
 const calculatePercentiles = (res) => {
     const total = res.length;
-    return [0.35, 0.50, 0.80, 0.95, 0.99].reduce((acc, percentile) => {
+    return PERCENTILES.reduce((acc, percentile) => {
         acc[percentile] = res[Math.floor(percentile * total)];
         return acc;
     }, {});
@@ -31,7 +32,7 @@ const calculatePercentiles = (res) => {
 const displayPercentiles = (percentiles) => {
     return _(percentiles)
         .toPairs()
-        .map((item) => `${100 * Number(item[0])}-я: ${item[1]} ms`)
+        .map((item) => `${100 * Number(item[0])}-th: ${item[1]} ms`)
         .join('\n');
 }
 
