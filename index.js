@@ -36,6 +36,10 @@ const displayPercentiles = (percentiles) => {
         .join('\n');
 }
 
+const displayRequestRecord = (record) =>{
+    return `Time: ${record.time} ${record.measure} Url: ${record.method} ${record.url}\n`;
+};
+
 const stream = hl(process.stdin)
     .split()
     .filter(isMorganRequestRecord)
@@ -44,8 +48,16 @@ const stream = hl(process.stdin)
     .map(toRequestRecord)
 
 stream
+    .fork()
     .sortBy(timeComparator)
-    .map((v) => v.time)
+    .pluck('time')
     .toArray(function(res) {
         console.info(displayPercentiles(calculatePercentiles(res)));
     });
+
+stream
+    .fork()
+    .sortBy(_.flip(timeComparator))
+    .take(10)
+    .map(displayRequestRecord)
+    .pipe(process.stdout);
