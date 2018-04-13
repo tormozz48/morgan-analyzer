@@ -2,6 +2,7 @@
   "name": "morgan-analyzer",
   "version": "1.0.0",
   "description": "Stream-based morgan log analyzer",
+  "bin": "index.js",
   "main": "index.js",
   "repository": "git@github.com:tormozz48/morgan-analyzer.git",
   "author": "tormozz48 <tormozz48@gmail.com>",

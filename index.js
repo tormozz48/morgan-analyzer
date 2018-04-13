@@ -1,7 +1,12 @@
+#!/usr/bin/env node
+
 const _ = require('lodash');
 const hl = require('highland');
 
+/* eslint-disable no-control-regex */
 const ANSI_REGEXP = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+/* eslint-enable no-control-regex */
+
 const HTTP_METHODS = ['GET', 'POST', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'];
 const PERCENTILES = [0.35, 0.50, 0.80, 0.95, 0.99];
 
