@@ -3,14 +3,12 @@
 const hl = require('highland');
 const R = require('ramda');
 
-/* eslint-disable no-control-regex */
-const ANSI_REGEXP = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
-/* eslint-enable no-control-regex */
-
-const HTTP_METHODS = ['GET', 'POST', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'];
 const PERCENTILES = [0.35, 0.50, 0.80, 0.95, 0.99];
 
-const isMorganRequestRecord = (row) => HTTP_METHODS.some((method) => row.indexOf(method) > -1);
+/* eslint-disable no-control-regex */
+const ANSI_REGEXP = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
+const MORGAN_REGEXP = /(GET)|(POST)|(OPTIONS)|(PUT)|(PATCH)|(DELETE)/;
+/* eslint-enable no-control-regex */
 
 const toRequestRecord = (rowChunks) => {
     const [, , method, url, status, time, measure] = rowChunks;
@@ -38,8 +36,8 @@ const displayPercentiles = R.compose(
 );
 
 const stream = hl(process.stdin)
-    .split()
-    .filter(isMorganRequestRecord)
+    .split() // split by rows
+    .filter(R.test(MORGAN_REGEXP)) // leave only morgan request rows
     .map(R.compose(
         toRequestRecord,
         R.filter(Boolean), // remove empty chunks
